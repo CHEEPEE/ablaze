@@ -1,6 +1,3 @@
-//  var server = "http://localhost:5000";
-// server = "https://group5antique.firebaseapp.com";
-
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       // User is signed in.
