@@ -1,5 +1,16 @@
 class Dashbaord extends React.Component {
-  state = {};
+  state = {
+    user: firebase.auth().currentUser
+  };
+
+  renderRequrements() {
+    renderRequirements();
+  }
+
+  renderDashBoard() {
+    renderDashBoard();
+  }
+
   logout() {
     logout();
   }
@@ -23,36 +34,19 @@ class Dashbaord extends React.Component {
           </button>
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav mr-auto">
-              <li className="nav-item active">
-                <a className="nav-link" href="#">
-                  Home <span className="sr-only">(current)</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">
-                  Link
-                </a>
-              </li>
-
-              <li className="nav-item">
-                <a className="nav-link disabled" href="#">
-                  Disabled
-                </a>
-              </li>
-            </ul>
+            <ul className="navbar-nav mr-auto" />
             <form className="form-inline my-2 my-lg-0">
               <div className="dropdown">
                 <a
                   className="btn btn-none text-white pr-3 dropdown-toggle"
                   href="#"
                   role="button"
-                  id="dropdownMenuLink"
+                  id="userEmail"
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  User email
+                  {firebase.auth().currentUser.email}
                 </a>
 
                 <div
@@ -83,9 +77,18 @@ class Dashbaord extends React.Component {
                 className="list-group-item border-0 rounded-0 list-group-item-action active"
                 data-toggle="list"
                 role="tab"
+                onClick={this.renderDashBoard.bind(this)}
               >
                 Boarding House
               </a>
+              {/* <a
+                className="list-group-item border-0 rounded-0 list-group-item-action"
+                data-toggle="list"
+                role="tab"
+                onClick={this.renderRequrements.bind(this)}
+              >
+                Requirements Management
+              </a> */}
               {/* <a
                 className="list-group-item border-0 rounded-0 list-group-item-action"
                 data-toggle="list"
@@ -118,6 +121,10 @@ class Dashbaord extends React.Component {
   }
 }
 
+function renderDashBoard() {
+  ReactDOM.render(<Dashbaord />, document.querySelector("#app"));
+}
+
 class ManageBoardingHouse extends React.Component {
   state = {};
   getBoardingHouses() {
@@ -137,7 +144,7 @@ class ManageBoardingHouse extends React.Component {
     this.getBoardingHouses();
     this.getNumber();
   }
-  getNumber(){
+  getNumber() {
     getNumber();
   }
 
@@ -217,6 +224,7 @@ class ManageBoardingHouse extends React.Component {
           <div className="col">Owner</div>
           <div className="col">Address</div>
           <div className="col" />
+          <div className="col" />
         </div>
         <div className="row w-100">
           <div
@@ -233,7 +241,7 @@ class BoardingHouseItem extends React.Component {
   state = {
     statusColor: "",
     status: this.props.objData.status,
-    objSnap:""
+    objSnap: ""
   };
 
   setToActive() {
@@ -242,9 +250,10 @@ class BoardingHouseItem extends React.Component {
       .doc(this.props.objData.userId)
       .update({
         status: "active"
-      }).then(function(){
-        sup.getBoardingHouses();
       })
+      .then(function() {
+        sup.getBoardingHouses();
+      });
   }
   setToPending() {
     let sup = this;
@@ -252,9 +261,10 @@ class BoardingHouseItem extends React.Component {
       .doc(this.props.objData.userId)
       .update({
         status: "pending"
-      }).then(function(){
-        sup.getBoardingHouses();
       })
+      .then(function() {
+        sup.getBoardingHouses();
+      });
   }
   setToBlock() {
     let sup = this;
@@ -262,11 +272,12 @@ class BoardingHouseItem extends React.Component {
       .doc(this.props.objData.userId)
       .update({
         status: "block"
-      }).then(function(){
-        sup.getBoardingHouses();
       })
+      .then(function() {
+        sup.getBoardingHouses();
+      });
   }
-  getNumber(){
+  getNumber() {
     getNumber();
   }
   onChangeSnap() {
@@ -275,18 +286,16 @@ class BoardingHouseItem extends React.Component {
       .doc(this.props.objData.userId)
       .onSnapshot(function(querySnapshot) {
         sup.setState({
-          objSnap:querySnapshot.data()
-         
-        })
+          objSnap: querySnapshot.data()
+        });
         sup.getNumber();
         sup.getcolor();
       });
-      
   }
-  getBoardingHouses(){
-    if(this.props.status == "all"){
+  getBoardingHouses() {
+    if (this.props.status == "all") {
       getBoardingHouses();
-    }else{
+    } else {
       getBoardingHouses(this.props.status);
     }
   }
@@ -369,12 +378,115 @@ class BoardingHouseItem extends React.Component {
             <div className="col">{this.state.objSnap.owner}</div>
             <div className="col">{this.state.objSnap.address}</div>
             <div className="col">
-              <button type="button" className="btn btn-info btn-sm">
+              <button
+                type="button"
+                data-toggle="modal"
+                data-target={"#checklist" + this.props.id}
+                className="btn btn-info btn-sm"
+              >
+                Requirements Check List
+              </button>
+            </div>
+            <div className="col">
+              <button
+                type="button"
+                data-toggle="modal"
+                data-target={"#modalDetails" + this.props.id}
+                className="btn btn-info btn-sm"
+              >
                 View Details
               </button>
             </div>
           </div>
         </div>
+        {/* view detail modal */}
+        <div
+          className="modal fade"
+          id={"checklist" + this.props.id}
+          tabIndex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {this.state.objSnap.name}
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <RequirementsCheckList
+                  id={this.props.id}
+                  key={this.props.id}
+                  modal={"#checklist" + this.props.id}
+                />
+              </div>
+              {/* <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="button" className="btn btn-primary">
+                  Save changes
+                </button>
+              </div> */}
+            </div>
+          </div>
+        </div>
+        <div
+          className="modal fade"
+          id={"modalDetails" + this.props.id}
+          tabIndex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {this.state.objSnap.name}
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <ViewDetails key={this.props.id} userId={this.props.id} />
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="button" className="btn btn-primary">
+                  Save changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* end details modal */}
       </React.Fragment>
     );
   }
@@ -382,15 +494,29 @@ class BoardingHouseItem extends React.Component {
 
 function getBoardingHouses(status) {
   if (status != null) {
+    ReactDOM.render(
+      <React.Fragment>
+        <center className="text-primary m-5">
+          <h1>Updating . . .</h1>
+        </center>
+      </React.Fragment>,
+      document.querySelector("#boardingHouseListContainer")
+    );
     db.collection("houseProfiles")
       .where("status", "==", status)
-      .get().then(function(querySnapshot) {
+      .get()
+      .then(function(querySnapshot) {
         var baordingHouse = [];
         querySnapshot.forEach(function(doc) {
           baordingHouse.push(doc.data());
         });
         var listItem = baordingHouse.map(object => (
-          <BoardingHouseItem key={object.userId+status} status = {status} objData={object} />
+          <BoardingHouseItem
+            key={object.userId + status}
+            id={object.userId}
+            status={status}
+            objData={object}
+          />
         ));
         ReactDOM.render(
           <React.Fragment>{listItem}</React.Fragment>,
@@ -398,64 +524,505 @@ function getBoardingHouses(status) {
         );
       });
   } else {
-    db.collection("houseProfiles").get().then(function(querySnapshot) {
-      var baordingHouse = [];
-      querySnapshot.forEach(function(doc) {
-        baordingHouse.push(doc.data());
+    ReactDOM.render(
+      <React.Fragment>
+        <center className="text-primary m-5">
+          <h1>Loading . . .</h1>
+        </center>
+      </React.Fragment>,
+      document.querySelector("#boardingHouseListContainer")
+    );
+    db.collection("houseProfiles")
+      .get()
+      .then(function(querySnapshot) {
+        var baordingHouse = [];
+        querySnapshot.forEach(function(doc) {
+          baordingHouse.push(doc.data());
+        });
+        var listItem = baordingHouse.map(object => (
+          <BoardingHouseItem
+            key={object.userId}
+            id={object.userId}
+            status="all"
+            objData={object}
+          />
+        ));
+        ReactDOM.render(
+          <React.Fragment>{listItem}</React.Fragment>,
+          document.querySelector("#boardingHouseListContainer")
+        );
       });
-      var listItem = baordingHouse.map(object => (
-        <BoardingHouseItem key={object.userId} status = "all" objData={object} />
-      ));
-      ReactDOM.render(
-        <React.Fragment>{listItem}</React.Fragment>,
-        document.querySelector("#boardingHouseListContainer")
-      );
-    });
   }
 }
 
-function getNumber(){
+function getNumber() {
   db.collection("houseProfiles")
-  .get().then(function(querySnapshot) {
-    var all = 0;
-    var active = 0;
-    var pending = 0;
-    var block = 0;
-    querySnapshot.forEach(function(doc) {
-      all++;
-      if(doc.data().status == "active"){
-        active++;
-      }else if(doc.data().status == "pending"){
-        pending++;
-      }else if(doc.data().status == "block"){
-        block++;
-      }
-    });
+    .get()
+    .then(function(querySnapshot) {
+      var all = 0;
+      var active = 0;
+      var pending = 0;
+      var block = 0;
+      querySnapshot.forEach(function(doc) {
+        all++;
+        if (doc.data().status == "active") {
+          active++;
+        } else if (doc.data().status == "pending") {
+          pending++;
+        } else if (doc.data().status == "block") {
+          block++;
+        }
+      });
 
-    ReactDOM.render(
-      <React.Fragment>
-        All <span className="ml-2 badge badge-primary text-primary bg-light shadow-sm">{all}</span>
-      </React.Fragment>,
-      document.querySelector("#filterAll")
-    )
-    ReactDOM.render(
-      <React.Fragment>
-        Active <span className="ml-2 badge badge-primary text-success bg-light shadow-sm ">{active}</span>
-      </React.Fragment>,
-      document.querySelector("#filterActive")
-    )
-    ReactDOM.render(
-      <React.Fragment>
-        Pending <span className="ml-2 badge badge-primary text-warning bg-light shadow-sm">{pending}</span>
-      </React.Fragment>,
-      document.querySelector("#filterPending")
-    )
-    ReactDOM.render(
-      <React.Fragment>
-        Blocklist <span className="ml-2 badge badge-primary text-dark bg-light shadow-sm">{block}</span>
-      </React.Fragment>,
-      document.querySelector("#filterBlock")
-    )
-   
-  });
+      ReactDOM.render(
+        <React.Fragment>
+          All{" "}
+          <span className="ml-2 badge badge-primary text-primary bg-light shadow-sm">
+            {all}
+          </span>
+        </React.Fragment>,
+        document.querySelector("#filterAll")
+      );
+      ReactDOM.render(
+        <React.Fragment>
+          Active{" "}
+          <span className="ml-2 badge badge-primary text-success bg-light shadow-sm ">
+            {active}
+          </span>
+        </React.Fragment>,
+        document.querySelector("#filterActive")
+      );
+      ReactDOM.render(
+        <React.Fragment>
+          Pending{" "}
+          <span className="ml-2 badge badge-primary text-warning bg-light shadow-sm">
+            {pending}
+          </span>
+        </React.Fragment>,
+        document.querySelector("#filterPending")
+      );
+      ReactDOM.render(
+        <React.Fragment>
+          Blocklist{" "}
+          <span className="ml-2 badge badge-primary text-dark bg-light shadow-sm">
+            {block}
+          </span>
+        </React.Fragment>,
+        document.querySelector("#filterBlock")
+      );
+    });
+}
+
+class RequirementsCheckList extends React.Component {
+  state = {};
+  saveCheckList() {
+    let sup = this;
+    let brgyClearance = $("#brgyClearance" + this.props.id).is(":checked");
+    let brgyBusPermit = $("#brgyBusPermit" + this.props.id).is(":checked");
+    let fireClearance = $("#fireClearance" + this.props.id).is(":checked");
+    let policeClearance = $("#policeClearance" + this.props.id).is(":checked");
+    let courtClearance = $("#courtClearance" + this.props.id).is(":checked");
+    let sanitaryClearance = $("#sanitaryClearance" + this.props.id).is(
+      ":checked"
+    );
+    let certOfOccp = $("#certOfOccp" + this.props.id).is(":checked");
+    let taxClearance = $("#taxClearance" + this.props.id).is(":checked");
+    let dti = $("#dti" + this.props.id).is(":checked");
+    let realEstatePermit = $("#realEstatePermit" + this.props.id).is(
+      ":checked"
+    );
+    let prevBusinessPermit = $("#prevBusinessPermit" + this.props.id).is(
+      ":checked"
+    );
+    let sssClearance = $("#sssClearance" + this.props.id).is(":checked");
+    let leaseContract = $("#leaseContract" + this.props.id).is(":checked");
+    let locationBus = $("#locationBus" + this.props.id).is(":checked");
+
+    db.collection("businessRequirements")
+      .doc(this.props.id)
+      .set({
+        brgyClearance: brgyClearance,
+        brgyBusPermit: brgyBusPermit,
+        fireClearance: fireClearance,
+        policeClearance: policeClearance,
+        courtClearance: courtClearance,
+        sanitaryClearance: sanitaryClearance,
+        certOfOccp: certOfOccp,
+        taxClearance: taxClearance,
+        dti: dti,
+        realEstatePermit: realEstatePermit,
+        prevBusinessPermit: prevBusinessPermit,
+        sssClearance: sssClearance,
+        leaseContract: leaseContract,
+        locationBus: locationBus
+      })
+      .then(function() {
+        console.log("Document successfully written!");
+        $(sup.props.modal).modal("hide");
+      })
+      .catch(function(error) {
+        console.error("Error writing document: ", error);
+      });
+  }
+
+  getCheckList() {
+    let sup = this;
+    db.collection("businessRequirements")
+      .doc(this.props.id)
+      .onSnapshot(function(querySnapshot) {
+        let obj = querySnapshot.data();
+        if(obj!=null){
+          $("#brgyClearance" + sup.props.id).prop("checked", obj.brgyClearance);
+          $("#brgyBusPermit" + sup.props.id).prop("checked", obj.brgyBusPermit);
+          $("#fireClearance" + sup.props.id).prop("checked", obj.fireClearance);
+          $("#policeClearance" + sup.props.id).prop("checked", obj.policeClearance);
+          $("#courtClearance" + sup.props.id).prop("checked", obj.courtClearance);
+          $("#sanitaryClearance" + sup.props.id).prop("checked", obj.sanitaryClearance);
+          $("#certOfOccp" + sup.props.id).prop("checked", obj.certOfOccp);
+          $("#taxClearance" + sup.props.id).prop("checked", obj.taxClearance);
+          $("#dti" + sup.props.id).prop("checked", obj.dti);
+          $("#realEstatePermit" + sup.props.id).prop("checked", obj.realEstatePermit);
+          $("#prevBusinessPermit" + sup.props.id).prop("checked", obj.prevBusinessPermit);
+          $("#sssClearance" + sup.props.id).prop("checked", obj.sssClearance);
+          $("#leaseContract" + sup.props.id).prop("checked", obj.leaseContract);
+          $("#locationBus" + sup.props.id).prop("checked", obj.locationBus);
+        }
+      });
+  }
+  componentDidMount() {
+    this.getCheckList();
+  }
+  render() {
+    return (
+      <div className="container-fluid">
+        <div className="row mb-3">
+          <h3>Requirements</h3>
+        </div>
+        {/* app letter */}
+        <div className="row">
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"brgyClearance" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"brgyClearance" + this.props.id}
+              >
+                Barangay Clearance
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"brgyBusPermit" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"brgyBusPermit" + this.props.id}
+              >
+                Barangay Business Permit
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"fireClearance" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"fireClearance" + this.props.id}
+              >
+                Fire Clearance
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"policeClearance" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"policeClearance" + this.props.id}
+              >
+                Police Clearance
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"courtClearance" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"courtClearance" + this.props.id}
+              >
+                Court Clearance
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"sanitaryClearance" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"sanitaryClearance" + this.props.id}
+              >
+                Sanitary Clearance
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"certOfOccp" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"certOfOccp" + this.props.id}
+              >
+                Certificate of Occupancy/ Annual Inspection
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"taxClearance" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"taxClearance" + this.props.id}
+              >
+                Tax Clearance
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"dti" + this.props.id}
+                required
+              />
+              <label class="custom-control-label" for={"dti" + this.props.id}>
+                DTI (Photocopy)
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"realEstatePermit" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"realEstatePermit" + this.props.id}
+              >
+                Real Estate Lessor's Business Permit
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"prevBusinessPermit" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"prevBusinessPermit" + this.props.id}
+              >
+                Business Permit (Previous Year)
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"sssClearance" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"sssClearance" + this.props.id}
+              >
+                SSS Clearance
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"leaseContract" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"leaseContract" + this.props.id}
+              >
+                Lease Contract (Rented stall/Space)
+              </label>
+            </div>
+          </div>
+          <div className="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id={"locationBus" + this.props.id}
+                required
+              />
+              <label
+                class="custom-control-label"
+                for={"locationBus" + this.props.id}
+              >
+                Location Business
+              </label>
+            </div>
+          </div>
+          <div className="col-12" />
+        </div>
+        {/* end app leter */}
+        <div className="row p-3">
+          <button
+            type="button"
+            onClick={this.saveCheckList.bind(this)}
+            className="btn btn-primary"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    );
+  }
+}
+
+class ViewDetails extends React.Component {
+  state = {
+    profile: "",
+    genInfo: ""
+  };
+  getProfle() {
+    let sup = this;
+    db.collection("houseProfiles")
+      .doc(this.props.userId)
+      .onSnapshot(function(querySnapshot) {
+        sup.setState({
+          profile: querySnapshot.data()
+        });
+      });
+  }
+  getGeneralInfo() {
+    let sup = this;
+    db.collection("generalInformation")
+      .doc(this.props.userId)
+      .onSnapshot(function(querySnapshot) {
+        sup.setState({
+          genInfo: querySnapshot.data()
+        });
+      });
+  }
+  componentDidMount() {
+    this.getGeneralInfo();
+    this.getProfle();
+  }
+  render() {
+    return (
+      <div className="container-fluid">
+        <div className="row">
+          <h3>General Inforamtion</h3>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <small className="text-muted">Boarding House Name</small>
+          </div>
+          <div className="col-12">
+            <h5>{this.state.profile.name}</h5>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <small className="text-muted">Owner</small>
+          </div>
+          <div className="col-12">
+            <h5>{this.state.profile.owner}</h5>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-12">
+            <small className="text-muted">Status</small>
+          </div>
+          <div className="col-12">
+            <h5>{this.state.profile.status}</h5>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <small className="text-muted">Address</small>
+          </div>
+          <div className="col-12">
+            <h5>{this.state.profile.address}</h5>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <small className="text-muted">Contact Number</small>
+          </div>
+          <div className="col-12">
+            <h5>{this.state.profile.contactNumber}</h5>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <small className="text-muted">Email</small>
+          </div>
+          <div className="col-12">
+            <h5>{this.state.profile.email}</h5>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
