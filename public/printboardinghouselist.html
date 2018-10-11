@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Print Boarding House List</title>
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css" >
+        <script src="assets/jquery-3.3.1.slim.min.js" ></script>
+        <script src="assets/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+        <script src="assets/js/bootstrap.min.js" ></script>
+        <script crossorigin src="assets/react.development.js"></script>
+        <script crossorigin src="assets/react-dom.development.js"></script>
+    
+        <!-- update the version number as needed -->
+    
+        <style>
+        body{
+          height: 100%;
+        }
+        html{
+          height: 100%;
+        }
+        .the-nun{
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        .active{
+          color: white !important;
+          
+        }
+        .indent{
+          text-indent: 50px;
+        }
+        .text-xl{
+          font-size: 4rem;
+          height: auto;
+        }
+        </style>
+      </head>
+<body>
+  <div class="container mt-2 d-print-none">
+      <div class="row">
+        <div class="col">
+            <select class="form-control form-control-sm" id = "printOptions" onchange="whatToPrint()">
+                <option value = "bhouse">Print Boardinh House List</option>
+                <option value = "permit">Print Permit</option>
+                <option value = "cert">Print Certificate</option>
+              </select>
+        </div>
+        <div class="col">
+            <button type="button" onClick = "printPage()" class="btn btn-primary btn-sm" >Print</button>
+        </div>
+
+      </div>
+  </div>
+  <div class="container pt-5" id = "mainContainer">
+
+  </div>
+</body>
+<script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAO0KlzY_B4V5SuLIKHGA42a62TPcLaqTU",
+    authDomain: "blaze-5155c.firebaseapp.com",
+    databaseURL: "https://blaze-5155c.firebaseio.com",
+    projectId: "blaze-5155c",
+    storageBucket: "blaze-5155c.appspot.com",
+    messagingSenderId: "353744476046"
+  };
+  const firebaseApp = firebase.initializeApp(config);
+  const db = firebaseApp.firestore();
+  db.settings({timestampsInSnapshots: true})
+
+</script>
+
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script src="printboardinghouselist.js" type="text/babel"></script>
+</html>

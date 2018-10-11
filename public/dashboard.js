@@ -11,8 +11,19 @@ class Dashbaord extends React.Component {
     renderDashBoard();
   }
 
+  renderBoardingHouseManagement(){
+    ReactDOM.render(
+      <ManageBoardingHouse />,
+      document.querySelector("#mainContainer")
+  )
+  }
+
   logout() {
     logout();
+  }
+  renderPrints(){
+    var win = window.open("printboardinghouselist.html");
+    win.focus();
   }
   render() {
     return (
@@ -77,18 +88,16 @@ class Dashbaord extends React.Component {
                 className="list-group-item border-0 rounded-0 list-group-item-action active"
                 data-toggle="list"
                 role="tab"
-                onClick={this.renderDashBoard.bind(this)}
+                onClick={this.renderBoardingHouseManagement.bind(this)}
               >
                 Boarding House
               </a>
-              {/* <a
+              <a
                 className="list-group-item border-0 rounded-0 list-group-item-action"
-                data-toggle="list"
-                role="tab"
-                onClick={this.renderRequrements.bind(this)}
+                onClick = {this.renderPrints.bind(this)}
               >
-                Requirements Management
-              </a> */}
+               Reports
+              </a>
               {/* <a
                 className="list-group-item border-0 rounded-0 list-group-item-action"
                 data-toggle="list"
@@ -152,7 +161,12 @@ class ManageBoardingHouse extends React.Component {
     return (
       <React.Fragment>
         <div className="row font-weight-light text-primary p-3 mt-5">
+          <div className = "col">
           <h3>Manage Boarding House</h3>
+          </div>
+          <div className = "col">
+        
+          </div>
         </div>
         <div className="row p-3">
           <ul
@@ -225,6 +239,7 @@ class ManageBoardingHouse extends React.Component {
           <div className="col">Address</div>
           <div className="col" />
           <div className="col" />
+          <div className="col" />
         </div>
         <div className="row w-100">
           <div
@@ -246,6 +261,7 @@ class BoardingHouseItem extends React.Component {
 
   setToActive() {
     let sup = this;
+    if(confirm("Set To Active?")){
     db.collection("houseProfiles")
       .doc(this.props.objData.userId)
       .update({
@@ -254,9 +270,11 @@ class BoardingHouseItem extends React.Component {
       .then(function() {
         sup.getBoardingHouses();
       });
+    }
   }
   setToPending() {
     let sup = this;
+    if(confirm("Set To Pending?")){
     db.collection("houseProfiles")
       .doc(this.props.objData.userId)
       .update({
@@ -265,10 +283,12 @@ class BoardingHouseItem extends React.Component {
       .then(function() {
         sup.getBoardingHouses();
       });
+    }
   }
   setToBlock() {
     let sup = this;
-    db.collection("houseProfiles")
+    if(confirm("Set To Block?")){
+      db.collection("houseProfiles")
       .doc(this.props.objData.userId)
       .update({
         status: "block"
@@ -276,6 +296,8 @@ class BoardingHouseItem extends React.Component {
       .then(function() {
         sup.getBoardingHouses();
       });
+    }
+   
   }
   getNumber() {
     getNumber();
@@ -298,6 +320,11 @@ class BoardingHouseItem extends React.Component {
     } else {
       getBoardingHouses(this.props.status);
     }
+  }
+
+  printPermit(){
+      var win = window.open("printBhouse.html?houseId=" + this.props.id, "_blank");
+      win.focus();
   }
 
   getcolor() {
@@ -336,7 +363,7 @@ class BoardingHouseItem extends React.Component {
               <div className="dropdown">
                 <button
                   className={
-                    "btn text-white text-capitalize w-50 dropdown-toggle btn-" +
+                    "btn text-white text-capitalize w-100 dropdown-toggle btn-" +
                     this.state.statusColor
                   }
                   type="button"
@@ -395,6 +422,15 @@ class BoardingHouseItem extends React.Component {
                 className="btn btn-info btn-sm"
               >
                 View Details
+              </button>
+            </div>
+            <div className ="col">
+            <button
+                type="button"
+                className="btn btn-dark btn-sm"
+                onClick = {this.printPermit.bind(this)}
+              >
+                Print Permit
               </button>
             </div>
           </div>
@@ -494,14 +530,6 @@ class BoardingHouseItem extends React.Component {
 
 function getBoardingHouses(status) {
   if (status != null) {
-    ReactDOM.render(
-      <React.Fragment>
-        <center className="text-primary m-5">
-          <h1>Updating . . .</h1>
-        </center>
-      </React.Fragment>,
-      document.querySelector("#boardingHouseListContainer")
-    );
     db.collection("houseProfiles")
       .where("status", "==", status)
       .get()
@@ -524,14 +552,6 @@ function getBoardingHouses(status) {
         );
       });
   } else {
-    ReactDOM.render(
-      <React.Fragment>
-        <center className="text-primary m-5">
-          <h1>Loading . . .</h1>
-        </center>
-      </React.Fragment>,
-      document.querySelector("#boardingHouseListContainer")
-    );
     db.collection("houseProfiles")
       .get()
       .then(function(querySnapshot) {
