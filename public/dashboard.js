@@ -262,15 +262,66 @@ class BoardingHouseItem extends React.Component {
   setToActive() {
     let sup = this;
     if(confirm("Set To Active?")){
-    db.collection("houseProfiles")
-      .doc(this.props.objData.userId)
-      .update({
-        status: "active"
-      })
-      .then(function() {
-        sup.getBoardingHouses();
-      });
+   
+
+        // db.collection("requirementComplete").doc(this.this.props.objData.userId)
+        // .get().then({
+          
+        // })
+
+        //set boarding house to active
+        let sup = this;
+        db.collection("businessRequirements")
+          .doc(this.props.objData.userId)
+          .onSnapshot(function(querySnapshot) {
+            let obj = querySnapshot.data();
+            if(obj!=null){
+              // $("#brgyClearance" + sup.props.id).prop("checked", obj.brgyClearance);
+              // $("#brgyBusPermit" + sup.props.id).prop("checked", obj.brgyBusPermit);
+              // $("#fireClearance" + sup.props.id).prop("checked", obj.fireClearance);
+              // $("#policeClearance" + sup.props.id).prop("checked", obj.policeClearance);
+              // $("#courtClearance" + sup.props.id).prop("checked", obj.courtClearance);
+              // $("#sanitaryClearance" + sup.props.id).prop("checked", obj.sanitaryClearance);
+              // $("#certOfOccp" + sup.props.id).prop("checked", obj.certOfOccp);
+              // $("#taxClearance" + sup.props.id).prop("checked", obj.taxClearance);
+              // $("#dti" + sup.props.id).prop("checked", obj.dti);
+              // $("#realEstatePermit" + sup.props.id).prop("checked", obj.realEstatePermit);
+              // $("#prevBusinessPermit" + sup.props.id).prop("checked", obj.prevBusinessPermit);
+              // $("#sssClearance" + sup.props.id).prop("checked", obj.sssClearance);
+              // $("#leaseContract" + sup.props.id).prop("checked", obj.leaseContract);
+              // $("#locationBus" + sup.props.id).prop("checked", obj.locationBus);
+              console.log(obj)
+            if( sup.isPermitValidate(obj)){
+              db.collection("houseProfiles")
+                  .doc(sup.props.objData.userId)
+                  .update({
+                    status: "active"
+                  })
+                  .then(function() {
+                    sup.getBoardingHouses();
+                  });
+            }else{
+              alert("Requirements Not Complete")
+            }
+              
+            }else{
+              alert("Requirements Not Complete")
+            }
+          });
+ 
+        
+      }
+  }
+
+  isPermitValidate(obj){
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+         if(!obj[key]){
+           return false
+         }
+      }
     }
+    return true
   }
   setToPending() {
     let sup = this;
@@ -345,6 +396,32 @@ class BoardingHouseItem extends React.Component {
         });
         break;
     }
+  }
+  getCheckList() {
+    let sup = this;
+    db.collection("businessRequirements")
+      .doc(this.props.objData.userId)
+      .onSnapshot(function(querySnapshot) {
+        let obj = querySnapshot.data();
+        if(obj!=null){
+          // $("#brgyClearance" + sup.props.id).prop("checked", obj.brgyClearance);
+          // $("#brgyBusPermit" + sup.props.id).prop("checked", obj.brgyBusPermit);
+          // $("#fireClearance" + sup.props.id).prop("checked", obj.fireClearance);
+          // $("#policeClearance" + sup.props.id).prop("checked", obj.policeClearance);
+          // $("#courtClearance" + sup.props.id).prop("checked", obj.courtClearance);
+          // $("#sanitaryClearance" + sup.props.id).prop("checked", obj.sanitaryClearance);
+          // $("#certOfOccp" + sup.props.id).prop("checked", obj.certOfOccp);
+          // $("#taxClearance" + sup.props.id).prop("checked", obj.taxClearance);
+          // $("#dti" + sup.props.id).prop("checked", obj.dti);
+          // $("#realEstatePermit" + sup.props.id).prop("checked", obj.realEstatePermit);
+          // $("#prevBusinessPermit" + sup.props.id).prop("checked", obj.prevBusinessPermit);
+          // $("#sssClearance" + sup.props.id).prop("checked", obj.sssClearance);
+          // $("#leaseContract" + sup.props.id).prop("checked", obj.leaseContract);
+          // $("#locationBus" + sup.props.id).prop("checked", obj.locationBus);
+          console.log(true)
+          return true
+        }
+      });
   }
   componentDidMount() {
     this.getcolor();
@@ -657,6 +734,18 @@ class RequirementsCheckList extends React.Component {
     let sssClearance = $("#sssClearance" + this.props.id).is(":checked");
     let leaseContract = $("#leaseContract" + this.props.id).is(":checked");
     let locationBus = $("#locationBus" + this.props.id).is(":checked");
+    let arrayOfRecords = [];
+    arrayOfRecords.push(brgyClearance);
+    arrayOfRecords.push(brgyBusPermit)
+    arrayOfRecords.push(fireClearance)
+    arrayOfRecords.push(policeClearance)
+    arrayOfRecords.push(courtClearance)
+    arrayOfRecords.push(sanitaryClearance)
+    arrayOfRecords.push(certOfOccp)
+    arrayOfRecords.push(taxClearance)
+    arrayOfRecords.push(dti)
+    arrayOfRecords.push(realEstatePermit)
+    arrayOfRecords.push(prevBusinessPermit)
 
     db.collection("businessRequirements")
       .doc(this.props.id)
@@ -679,10 +768,21 @@ class RequirementsCheckList extends React.Component {
       .then(function() {
         console.log("Document successfully written!");
         $(sup.props.modal).modal("hide");
+        db.collection("requirementComplete")
+        .doc(sup.props.id)
+        .set({isComplete:sup.isRequirementsComplete(arrayOfRecords)})
       })
       .catch(function(error) {
         console.error("Error writing document: ", error);
       });
+  }
+
+  isRequirementsComplete(arratOfPermist){
+    for(let isChecked of arratOfPermist){
+        if(!isChecked){
+          return false;
+        }
+    }
   }
 
   getCheckList() {
