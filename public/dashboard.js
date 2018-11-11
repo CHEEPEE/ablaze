@@ -276,20 +276,6 @@ class BoardingHouseItem extends React.Component {
           .onSnapshot(function(querySnapshot) {
             let obj = querySnapshot.data();
             if(obj!=null){
-              // $("#brgyClearance" + sup.props.id).prop("checked", obj.brgyClearance);
-              // $("#brgyBusPermit" + sup.props.id).prop("checked", obj.brgyBusPermit);
-              // $("#fireClearance" + sup.props.id).prop("checked", obj.fireClearance);
-              // $("#policeClearance" + sup.props.id).prop("checked", obj.policeClearance);
-              // $("#courtClearance" + sup.props.id).prop("checked", obj.courtClearance);
-              // $("#sanitaryClearance" + sup.props.id).prop("checked", obj.sanitaryClearance);
-              // $("#certOfOccp" + sup.props.id).prop("checked", obj.certOfOccp);
-              // $("#taxClearance" + sup.props.id).prop("checked", obj.taxClearance);
-              // $("#dti" + sup.props.id).prop("checked", obj.dti);
-              // $("#realEstatePermit" + sup.props.id).prop("checked", obj.realEstatePermit);
-              // $("#prevBusinessPermit" + sup.props.id).prop("checked", obj.prevBusinessPermit);
-              // $("#sssClearance" + sup.props.id).prop("checked", obj.sssClearance);
-              // $("#leaseContract" + sup.props.id).prop("checked", obj.leaseContract);
-              // $("#locationBus" + sup.props.id).prop("checked", obj.locationBus);
               console.log(obj)
             if( sup.isPermitValidate(obj)){
               db.collection("houseProfiles")
@@ -299,6 +285,11 @@ class BoardingHouseItem extends React.Component {
                   })
                   .then(function() {
                     sup.getBoardingHouses();
+                    db.collection("notifyOwnerStatus")
+                    .doc("details").update({
+                      message:"Your boarding house is now ACTIVE",
+                      number:sup.props.objData.contactNumber
+                    })
                   });
             }else{
               alert("Requirements Not Complete")
@@ -346,6 +337,11 @@ class BoardingHouseItem extends React.Component {
       })
       .then(function() {
         sup.getBoardingHouses();
+        db.collection("notifyOwnerStatus")
+        .doc("details").update({
+          message:"Your Boarding House has been BLOCK by ADMIN",
+          number:sup.props.objData.contactNumber
+        })
       });
     }
    
@@ -396,32 +392,6 @@ class BoardingHouseItem extends React.Component {
         });
         break;
     }
-  }
-  getCheckList() {
-    let sup = this;
-    db.collection("businessRequirements")
-      .doc(this.props.objData.userId)
-      .onSnapshot(function(querySnapshot) {
-        let obj = querySnapshot.data();
-        if(obj!=null){
-          // $("#brgyClearance" + sup.props.id).prop("checked", obj.brgyClearance);
-          // $("#brgyBusPermit" + sup.props.id).prop("checked", obj.brgyBusPermit);
-          // $("#fireClearance" + sup.props.id).prop("checked", obj.fireClearance);
-          // $("#policeClearance" + sup.props.id).prop("checked", obj.policeClearance);
-          // $("#courtClearance" + sup.props.id).prop("checked", obj.courtClearance);
-          // $("#sanitaryClearance" + sup.props.id).prop("checked", obj.sanitaryClearance);
-          // $("#certOfOccp" + sup.props.id).prop("checked", obj.certOfOccp);
-          // $("#taxClearance" + sup.props.id).prop("checked", obj.taxClearance);
-          // $("#dti" + sup.props.id).prop("checked", obj.dti);
-          // $("#realEstatePermit" + sup.props.id).prop("checked", obj.realEstatePermit);
-          // $("#prevBusinessPermit" + sup.props.id).prop("checked", obj.prevBusinessPermit);
-          // $("#sssClearance" + sup.props.id).prop("checked", obj.sssClearance);
-          // $("#leaseContract" + sup.props.id).prop("checked", obj.leaseContract);
-          // $("#locationBus" + sup.props.id).prop("checked", obj.locationBus);
-          console.log(true)
-          return true
-        }
-      });
   }
   componentDidMount() {
     this.getcolor();

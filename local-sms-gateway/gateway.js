@@ -28,10 +28,10 @@ db.collection("sendSms")
             const text = change.doc.data().message;
             nexmo.message.sendSms(from, to, text, (error, reply) => {
                 if(error) {
-                throw error;
+                 console.log(error);
                 } else if(reply.messages[0].status != '0') {
                 console.log(reply);
-                throw 'Nexmo returned back a non-zero status';
+                 console.log('Nexmo returned back a non-zero status')
                 } else {
                 console.log(reply);
                 }
@@ -40,3 +40,24 @@ db.collection("sendSms")
     });
 });
 
+db.collection("notifyOwnerStatus")
+.onSnapshot(function(snapshot) {
+    snapshot.docChanges().forEach(function(change) {
+        if (change.type === "modified") {
+            console.log("Modified Status: ", change.doc.data());
+            const from = 'Nexmo';
+            const to =  Number(change.doc.data().number);
+            const text = change.doc.data().message;
+            nexmo.message.sendSms(from, to, text, (error, reply) => {
+                if(error) {
+                 console.log(error);
+                } else if(reply.messages[0].status != '0') {
+                console.log(reply);
+                 console.log('Nexmo returned back a non-zero status')
+                } else {
+                console.log(reply);
+                }
+            });
+        }
+    });
+});
