@@ -1061,7 +1061,7 @@ class ViewDetails extends React.Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <h3>General Inforamtion</h3>
+          <h3>General Information</h3>
         </div>
         <div className="row">
           <div className="col-12">
