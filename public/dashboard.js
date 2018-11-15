@@ -137,7 +137,7 @@ function renderDashBoard() {
 class ManageBoardingHouse extends React.Component {
   state = {};
   getBoardingHouses() {
-    getBoardingHouses();
+    getBoardingHouses(null);
   }
 
   getActive() {
@@ -602,7 +602,8 @@ function getBoardingHouses(status) {
     db.collection("houseProfiles")
       .get()
       .then(function(querySnapshot) {
-        var baordingHouse = [];
+        let baordingHouse = [];
+        console.log(querySnapshot)
         querySnapshot.forEach(function(doc) {
           baordingHouse.push(doc.data());
         });
@@ -619,6 +620,7 @@ function getBoardingHouses(status) {
           document.querySelector("#boardingHouseListContainer")
         );
       });
+
   }
 }
 
@@ -626,6 +628,7 @@ function getNumber() {
   db.collection("houseProfiles")
     .get()
     .then(function(querySnapshot) {
+
       var all = 0;
       var active = 0;
       var pending = 0;

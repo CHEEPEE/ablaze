@@ -14,8 +14,8 @@ const firebase = require('firebase');
   const db = firebase.firestore();
   db.settings({timestampsInSnapshots: true})
 const nexmo = new Nexmo({
-  apiKey: 'dad9f461',
-  apiSecret: 'm767kWD0ZjT52ZJ2'
+  apiKey: '0cfd4946',
+  apiSecret: 'gYiH2GlKZEy1Flwr'
 });
 
 db.collection("sendSms")
@@ -46,7 +46,7 @@ db.collection("notifyOwnerStatus")
         if (change.type === "modified") {
             console.log("Modified Status: ", change.doc.data());
             const from = 'Nexmo';
-            const to =  Number(change.doc.data().number);
+            const to =  Number(numberFormater(change.doc.data().number));
             const text = change.doc.data().message;
             nexmo.message.sendSms(from, to, text, (error, reply) => {
                 if(error) {
@@ -61,3 +61,11 @@ db.collection("notifyOwnerStatus")
         }
     });
 });
+
+function numberFormater(number){
+    if(number.length === 11){
+        return "63"+(number+"").substring(1)
+    }else if(number.length === 13 && number[0]==="+"){
+        return (number+"").substring(1)
+    }
+}
