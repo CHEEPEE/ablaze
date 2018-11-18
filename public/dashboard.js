@@ -11,17 +11,17 @@ class Dashbaord extends React.Component {
     renderDashBoard();
   }
 
-  renderBoardingHouseManagement(){
+  renderBoardingHouseManagement() {
     ReactDOM.render(
       <ManageBoardingHouse />,
       document.querySelector("#mainContainer")
-  )
+    );
   }
 
   logout() {
     logout();
   }
-  renderPrints(){
+  renderPrints() {
     var win = window.open("printboardinghouselist.html");
     win.focus();
   }
@@ -77,7 +77,10 @@ class Dashbaord extends React.Component {
           </div>
         </nav>
         <div className="row h-100">
-          <div className="col-2 h-100 pt-5">
+          <div className = "col-2">
+          </div>
+
+          <div className="col-2 position-fixed h-100 pt-5">
             <div
               className="list-group bg-white pt-5 h-100"
               id="list-tab"
@@ -94,9 +97,9 @@ class Dashbaord extends React.Component {
               </a>
               <a
                 className="list-group-item border-0 rounded-0 list-group-item-action"
-                onClick = {this.renderPrints.bind(this)}
+                onClick={this.renderPrints.bind(this)}
               >
-               Reports
+                Reports
               </a>
               {/* <a
                 className="list-group-item border-0 rounded-0 list-group-item-action"
@@ -121,7 +124,7 @@ class Dashbaord extends React.Component {
               </a> */}
             </div>
           </div>
-          <div className="col-10 bg-white pt-5 shadow" id="mainContainer">
+          <div className="col-10 bg-white pt-5" id="mainContainer">
             <ManageBoardingHouse />
           </div>
         </div>
@@ -156,17 +159,18 @@ class ManageBoardingHouse extends React.Component {
   getNumber() {
     getNumber();
   }
+  getRequest() {
+    getRequest()
+  }
 
   render() {
     return (
       <React.Fragment>
         <div className="row font-weight-light text-primary p-3 mt-5">
-          <div className = "col">
-          <h3>Manage Boarding House</h3>
+          <div className="col">
+            <h3>Manage Boarding House</h3>
           </div>
-          <div className = "col">
-        
-          </div>
+          <div className="col" />
         </div>
         <div className="row p-3">
           <ul
@@ -230,28 +234,129 @@ class ManageBoardingHouse extends React.Component {
                 Block List
               </a>
             </li>
+            <li className="nav-item">
+              <a
+                onClick={this.getRequest.bind(this)}
+                className="nav-link pl-2 pr-2 btn-outline-danger m-2"
+                id="filterBlock"
+                data-toggle="pill"
+                href="#pills-contact"
+                role="tab"
+                aria-controls="pills-contact"
+                aria-selected="false"
+              >
+                Request
+              </a>
+            </li>
           </ul>
         </div>
-        <div className="row pl-3 pr-4">
-          <div className="col">Name</div>
-          <div className="col">Status</div>
-          <div className="col">Owner</div>
-          <div className="col">Address</div>
-          <div className="col" />
-          <div className="col" />
-          <div className="col" />
-        </div>
-        <div className="row w-100">
-          <div
-            className="list-group p-3 w-100"
-            id="boardingHouseListContainer"
-          />
-        </div>
+        <div id="boardingHouseListContainer" />
       </React.Fragment>
     );
   }
 }
 
+function getRequest(){
+  db.collection("changeNameRequest")
+      .where("status", "==", false)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+        });
+
+        let baordingHouse = [];
+        console.log(querySnapshot);
+        querySnapshot.forEach(function(doc) {
+          baordingHouse.push(doc.data());
+        });
+        var listItem = baordingHouse.map(object => (
+          <RequestItem
+            key={object.ownerAccountId}
+            id={object.ownerAccountId}
+            objData={object}
+            newName={object.newName}
+          />
+        ));
+        ReactDOM.render(
+          <React.Fragment>{listItem}</React.Fragment>,
+          document.querySelector("#boardingHouseListContainer")
+        );
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+      });
+}
+class RequestItem extends React.Component {
+  state = { profile: {} };
+  componentDidMount() {
+    let sup = this;
+    db.collection("houseProfiles")
+      .doc(this.props.id)
+      .onSnapshot(function(doc) {
+        sup.setState({
+          profile: doc.data()
+        });
+      });
+  }
+
+  confirmRequest =()=>{
+    let sup = this
+    if(confirm("Confirm name change?")){
+      db.collection("houseProfiles")
+      .doc(this.props.id)
+      .update({
+        name:this.props.newName
+      }).then(function(docRef){
+        console.log("name change Success")
+        db.collection("changeNameRequest")
+        .doc(sup.props.id).update({
+          status:true
+        }).then(function(){
+          getRequest();
+        })
+      })
+    }
+  }
+  render() {
+    return (
+      <React.Fragment>
+        <div className="list-group-item mt-2 list-group-item-action bg-light border-0 ">
+          <div className = "row">
+          <div className="col">
+            <div className="row pt-1">
+              <div className="col-auto text-primary font-weight-bold">
+                {this.state.profile.name}
+              </div>
+              <div classNamea="col-auto">to</div>
+              <div className="col-auto text-success font-weight-bold">
+                {this.props.newName}
+              </div>
+            </div>
+          </div>
+          <div className="col d-flex justify-content-end">
+              <button
+                type="button"
+                onClick = {this.confirmRequest.bind(this)}
+                className="btn mr-2 btn-small btn-success btn-sm"
+              >
+               Confirm Request
+              </button>
+              <button
+                type="button"
+                className="btn btn-small btn-danger btn-sm"
+              >
+               Decline Request
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </React.Fragment>
+    );
+  }
+}
 class BoardingHouseItem extends React.Component {
   state = {
     statusColor: "",
@@ -261,90 +366,86 @@ class BoardingHouseItem extends React.Component {
 
   setToActive() {
     let sup = this;
-    if(confirm("Set To Active?")){
-   
+    if (confirm("Set To Active?")) {
+      // db.collection("requirementComplete").doc(this.this.props.objData.userId)
+      // .get().then({
 
-        // db.collection("requirementComplete").doc(this.this.props.objData.userId)
-        // .get().then({
-          
-        // })
+      // })
 
-        //set boarding house to active
-        let sup = this;
-        db.collection("businessRequirements")
-          .doc(this.props.objData.userId)
-          .onSnapshot(function(querySnapshot) {
-            let obj = querySnapshot.data();
-            if(obj!=null){
-              console.log(obj)
-            if( sup.isPermitValidate(obj)){
+      //set boarding house to active
+      let sup = this;
+      db.collection("businessRequirements")
+        .doc(this.props.objData.userId)
+        .onSnapshot(function(querySnapshot) {
+          let obj = querySnapshot.data();
+          if (obj != null) {
+            console.log(obj);
+            if (sup.isPermitValidate(obj)) {
               db.collection("houseProfiles")
-                  .doc(sup.props.objData.userId)
-                  .update({
-                    status: "active"
-                  })
-                  .then(function() {
-                    sup.getBoardingHouses();
-                    db.collection("notifyOwnerStatus")
-                    .doc("details").update({
-                      message:"Your boarding house is now ACTIVE",
-                      number:sup.props.objData.contactNumber
-                    })
-                  });
-            }else{
-              alert("Requirements Not Complete")
+                .doc(sup.props.objData.userId)
+                .update({
+                  status: "active"
+                })
+                .then(function() {
+                  sup.getBoardingHouses();
+                  db.collection("notifyOwnerStatus")
+                    .doc("details")
+                    .update({
+                      message: "Your boarding house is now ACTIVE",
+                      number: sup.props.objData.contactNumber
+                    });
+                });
+            } else {
+              alert("Requirements Not Complete");
             }
-              
-            }else{
-              alert("Requirements Not Complete")
-            }
-          });
- 
-        
-      }
+          } else {
+            alert("Requirements Not Complete");
+          }
+        });
+    }
   }
 
-  isPermitValidate(obj){
+  isPermitValidate(obj) {
     for (var key in obj) {
       if (obj.hasOwnProperty(key)) {
-         if(!obj[key]){
-           return false
-         }
+        if (!obj[key]) {
+          return false;
+        }
       }
     }
-    return true
+    return true;
   }
   setToPending() {
     let sup = this;
-    if(confirm("Set To Pending?")){
-    db.collection("houseProfiles")
-      .doc(this.props.objData.userId)
-      .update({
-        status: "pending"
-      })
-      .then(function() {
-        sup.getBoardingHouses();
-      });
+    if (confirm("Set To Pending?")) {
+      db.collection("houseProfiles")
+        .doc(this.props.objData.userId)
+        .update({
+          status: "pending"
+        })
+        .then(function() {
+          sup.getBoardingHouses();
+        });
     }
   }
   setToBlock() {
     let sup = this;
-    if(confirm("Set To Block?")){
+    if (confirm("Set To Block?")) {
       db.collection("houseProfiles")
-      .doc(this.props.objData.userId)
-      .update({
-        status: "block"
-      })
-      .then(function() {
-        sup.getBoardingHouses();
-        db.collection("notifyOwnerStatus")
-        .doc("details").update({
-          message:"Your Boarding House has been BLOCK by ADMIN",
-          number:sup.props.objData.contactNumber
+        .doc(this.props.objData.userId)
+        .update({
+          status: "block"
         })
-      });
+        .then(function() {
+          sup.getBoardingHouses();
+          db.collection("notifyOwnerStatus")
+            .doc("details")
+            .update({
+              message: "Your Boarding House has been BLOCK by ADMIN",
+              number: sup.props.objData.contactNumber
+            });
+        });
     }
-   
   }
   getNumber() {
     getNumber();
@@ -369,9 +470,12 @@ class BoardingHouseItem extends React.Component {
     }
   }
 
-  printPermit(){
-      var win = window.open("printBhouse.html?houseId=" + this.props.id, "_blank");
-      win.focus();
+  printPermit() {
+    var win = window.open(
+      "printBhouse.html?houseId=" + this.props.id,
+      "_blank"
+    );
+    win.focus();
   }
 
   getcolor() {
@@ -471,11 +575,11 @@ class BoardingHouseItem extends React.Component {
                 View Details
               </button>
             </div>
-            <div className ="col">
-            <button
+            <div className="col">
+              <button
                 type="button"
                 className="btn btn-dark btn-sm"
-                onClick = {this.printPermit.bind(this)}
+                onClick={this.printPermit.bind(this)}
               >
                 Print Permit
               </button>
@@ -594,7 +698,21 @@ function getBoardingHouses(status) {
           />
         ));
         ReactDOM.render(
-          <React.Fragment>{listItem}</React.Fragment>,
+          <React.Fragment>
+            <div className="row pl-3 pr-4">
+              <div className="col">Name</div>
+              <div className="col">Status</div>
+              <div className="col">Owner</div>
+              <div className="col">Address</div>
+              <div className="col" />
+              <div className="col" />
+              <div className="col" />
+            </div>
+            <div className="row w-100">
+              <div className="list-group m-3 p-3 w-100" />
+              {listItem}
+            </div>
+          </React.Fragment>,
           document.querySelector("#boardingHouseListContainer")
         );
       });
@@ -603,7 +721,7 @@ function getBoardingHouses(status) {
       .get()
       .then(function(querySnapshot) {
         let baordingHouse = [];
-        console.log(querySnapshot)
+        console.log(querySnapshot);
         querySnapshot.forEach(function(doc) {
           baordingHouse.push(doc.data());
         });
@@ -616,11 +734,25 @@ function getBoardingHouses(status) {
           />
         ));
         ReactDOM.render(
-          <React.Fragment>{listItem}</React.Fragment>,
+          <React.Fragment>
+            {" "}
+            <div className="row pl-3 pr-4">
+              <div className="col">Name</div>
+              <div className="col">Status</div>
+              <div className="col">Owner</div>
+              <div className="col">Address</div>
+              <div className="col" />
+              <div className="col" />
+              <div className="col" />
+            </div>
+            <div className="row w-100">
+              <div className="list-group w-100" />
+              {listItem}
+            </div>
+          </React.Fragment>,
           document.querySelector("#boardingHouseListContainer")
         );
       });
-
   }
 }
 
@@ -628,7 +760,6 @@ function getNumber() {
   db.collection("houseProfiles")
     .get()
     .then(function(querySnapshot) {
-
       var all = 0;
       var active = 0;
       var pending = 0;
@@ -709,16 +840,16 @@ class RequirementsCheckList extends React.Component {
     let locationBus = $("#locationBus" + this.props.id).is(":checked");
     let arrayOfRecords = [];
     arrayOfRecords.push(brgyClearance);
-    arrayOfRecords.push(brgyBusPermit)
-    arrayOfRecords.push(fireClearance)
-    arrayOfRecords.push(policeClearance)
-    arrayOfRecords.push(courtClearance)
-    arrayOfRecords.push(sanitaryClearance)
-    arrayOfRecords.push(certOfOccp)
-    arrayOfRecords.push(taxClearance)
-    arrayOfRecords.push(dti)
-    arrayOfRecords.push(realEstatePermit)
-    arrayOfRecords.push(prevBusinessPermit)
+    arrayOfRecords.push(brgyBusPermit);
+    arrayOfRecords.push(fireClearance);
+    arrayOfRecords.push(policeClearance);
+    arrayOfRecords.push(courtClearance);
+    arrayOfRecords.push(sanitaryClearance);
+    arrayOfRecords.push(certOfOccp);
+    arrayOfRecords.push(taxClearance);
+    arrayOfRecords.push(dti);
+    arrayOfRecords.push(realEstatePermit);
+    arrayOfRecords.push(prevBusinessPermit);
 
     db.collection("businessRequirements")
       .doc(this.props.id)
@@ -742,19 +873,19 @@ class RequirementsCheckList extends React.Component {
         console.log("Document successfully written!");
         $(sup.props.modal).modal("hide");
         db.collection("requirementComplete")
-        .doc(sup.props.id)
-        .set({isComplete:sup.isRequirementsComplete(arrayOfRecords)})
+          .doc(sup.props.id)
+          .set({ isComplete: sup.isRequirementsComplete(arrayOfRecords) });
       })
       .catch(function(error) {
         console.error("Error writing document: ", error);
       });
   }
 
-  isRequirementsComplete(arratOfPermist){
-    for(let isChecked of arratOfPermist){
-        if(!isChecked){
-          return false;
-        }
+  isRequirementsComplete(arratOfPermist) {
+    for (let isChecked of arratOfPermist) {
+      if (!isChecked) {
+        return false;
+      }
     }
   }
 
@@ -764,18 +895,33 @@ class RequirementsCheckList extends React.Component {
       .doc(this.props.id)
       .onSnapshot(function(querySnapshot) {
         let obj = querySnapshot.data();
-        if(obj!=null){
+        if (obj != null) {
           $("#brgyClearance" + sup.props.id).prop("checked", obj.brgyClearance);
           $("#brgyBusPermit" + sup.props.id).prop("checked", obj.brgyBusPermit);
           $("#fireClearance" + sup.props.id).prop("checked", obj.fireClearance);
-          $("#policeClearance" + sup.props.id).prop("checked", obj.policeClearance);
-          $("#courtClearance" + sup.props.id).prop("checked", obj.courtClearance);
-          $("#sanitaryClearance" + sup.props.id).prop("checked", obj.sanitaryClearance);
+          $("#policeClearance" + sup.props.id).prop(
+            "checked",
+            obj.policeClearance
+          );
+          $("#courtClearance" + sup.props.id).prop(
+            "checked",
+            obj.courtClearance
+          );
+          $("#sanitaryClearance" + sup.props.id).prop(
+            "checked",
+            obj.sanitaryClearance
+          );
           $("#certOfOccp" + sup.props.id).prop("checked", obj.certOfOccp);
           $("#taxClearance" + sup.props.id).prop("checked", obj.taxClearance);
           $("#dti" + sup.props.id).prop("checked", obj.dti);
-          $("#realEstatePermit" + sup.props.id).prop("checked", obj.realEstatePermit);
-          $("#prevBusinessPermit" + sup.props.id).prop("checked", obj.prevBusinessPermit);
+          $("#realEstatePermit" + sup.props.id).prop(
+            "checked",
+            obj.realEstatePermit
+          );
+          $("#prevBusinessPermit" + sup.props.id).prop(
+            "checked",
+            obj.prevBusinessPermit
+          );
           $("#sssClearance" + sup.props.id).prop("checked", obj.sssClearance);
           $("#leaseContract" + sup.props.id).prop("checked", obj.leaseContract);
           $("#locationBus" + sup.props.id).prop("checked", obj.locationBus);
