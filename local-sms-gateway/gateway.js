@@ -64,7 +64,7 @@ db.collection("notifyOwnerStatus")
 
 function numberFormater(number){
     if(number.length === 11){
-        return "63"+(number+"").substring(1)
+        return "63"+((number+"").substring(1))
     }else if(number.length === 13 && number[0]==="+"){
         return (number+"").substring(1)
     }
