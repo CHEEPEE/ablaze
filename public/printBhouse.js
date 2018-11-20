@@ -139,7 +139,7 @@ class PrintBusinessPermit extends React.Component {
             class="form-control text-capitalize form-control-lg text-center border-0"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
-            placeholder="Enter Line of Buisiness"
+            placeholder="Enter Line of Business"
           />
           <div className="col-12">
             <small className="text-muted">Business Address</small>
