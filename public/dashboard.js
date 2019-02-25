@@ -86,7 +86,7 @@ class Dashbaord extends React.Component {
               id="list-tab"
               role="tablist"
             >
-              <h3 className="p-2 text-info">Contol Panel</h3>
+              <h3 className="p-2 text-info">Control Panel</h3>
               <a
                 className="list-group-item border-0 rounded-0 list-group-item-action active"
                 data-toggle="list"

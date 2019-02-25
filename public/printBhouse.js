@@ -42,6 +42,7 @@ class BoardingHouseList extends React.Component {
               <div className="row">
                 <div className="col font-weight-bold">Boarding House Name</div>
                 <div className="col font-weight-bold">Owner</div>
+                <div className="col font-weight-bold">Status</div>
               </div>
             </div>
           </div>
@@ -62,6 +63,7 @@ class BoardingHouseItem extends React.Component {
         <div className="row">
           <div className="col text-info">{this.props.objData.name}</div>
           <div className="col">{this.props.objData.owner}</div>
+          <div className="col">{this.props.objData.status}</div>
         </div>
       </div>
     );

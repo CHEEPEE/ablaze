@@ -2,7 +2,7 @@ class BoardingHouseList extends React.Component {
   state = {};
   getBlockedList() {
     db.collection("houseProfiles")
-      .where("status", "==", "block")
+      // .where("status", "==", "block")
       .get()
       .then(function(querySnapshot) {
         var baordingHouse = [];
@@ -42,6 +42,7 @@ class BoardingHouseList extends React.Component {
               <div className="row">
                 <div className="col font-weight-bold">Boarding House Name</div>
                 <div className="col font-weight-bold">Owner</div>
+                <div className="col font-weight-bold">Status</div>
               </div>
             </div>
           </div>
@@ -62,6 +63,7 @@ class BoardingHouseItem extends React.Component {
         <div className="row">
           <div className="col text-info">{this.props.objData.name}</div>
           <div className="col">{this.props.objData.owner}</div>
+          <div className="col">{this.props.objData.status}</div>
         </div>
       </div>
     );
@@ -69,25 +71,27 @@ class BoardingHouseItem extends React.Component {
 }
 
 class PrintBusinessPermit extends React.Component {
-  state = {businessProfileObject:""};
-  getParam(){
+  state = { businessProfileObject: "" };
+  getParam() {
     var urlParams = new URLSearchParams(window.location.search);
     //console.log(urlParams.get('eventid'));
 
     var event_id = urlParams.get("houseId");
-    if (event_id!=null){
+    if (event_id != null) {
       console.log(event_id);
       let sup = this;
-      db.collection("houseProfiles").doc(event_id).onSnapshot(function(doc) {
-        sup.setState({
-          businessProfileObject:doc.data()
-        })
-    });
-    }else{
+      db.collection("houseProfiles")
+        .doc(event_id)
+        .onSnapshot(function(doc) {
+          sup.setState({
+            businessProfileObject: doc.data()
+          });
+        });
+    } else {
       console.log("The Nun");
     }
   }
-  componentDidMount(){
+  componentDidMount() {
     this.getParam();
   }
   render() {
@@ -108,7 +112,7 @@ class PrintBusinessPermit extends React.Component {
         <div className="row text-center mt-3 mb-3">
           <input
             type="text"
-            defaultValue = {this.state.businessProfileObject.owner}
+            defaultValue={this.state.businessProfileObject.owner}
             class="form-control text-primary text-uppercase font-weight-bold text-xl form-control-lg text-center border-0"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
@@ -122,7 +126,7 @@ class PrintBusinessPermit extends React.Component {
         <div className="row text-center mb-3">
           <input
             type="text"
-            defaultValue = {this.state.businessProfileObject.name}
+            defaultValue={this.state.businessProfileObject.name}
             class="form-control text-success text-uppercase font-weight-bold form-control-lg text-center border-0"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
@@ -135,7 +139,6 @@ class PrintBusinessPermit extends React.Component {
         <div className="row text-center mb-3">
           <input
             type="text"
-            
             class="form-control text-capitalize form-control-lg text-center border-0"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
@@ -148,7 +151,7 @@ class PrintBusinessPermit extends React.Component {
         <div className="row text-center mb-5">
           <input
             type="text"
-            defaultValue = {this.state.businessProfileObject.address}
+            defaultValue={this.state.businessProfileObject.address}
             class="form-control text-capitalize form-control-lg text-center border-0"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
@@ -241,80 +244,82 @@ class PrintBusinessPermit extends React.Component {
         <div className="row mt-3">
           <div className="col-auto">Payment</div>
           <div className="col">
-            <small className = "pl-1">1st Quarter</small><br/>
+            <small className="pl-1">1st Quarter</small>
+            <br />
             <input
-                  type="text"
-                  class="form-control text-capitalize font-weight-bold form-control-sm border-0"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  
-                />
+              type="text"
+              class="form-control text-capitalize font-weight-bold form-control-sm border-0"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+            />
           </div>
           <div className="col">
-            <small className = "pl-1">2nd Quarter</small><br/>
+            <small className="pl-1">2nd Quarter</small>
+            <br />
             <input
-                  type="text"
-                  class="form-control text-capitalize font-weight-bold form-control-sm border-0"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  
-                />
+              type="text"
+              class="form-control text-capitalize font-weight-bold form-control-sm border-0"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+            />
           </div>
           <div className="col">
-            <small className = "pl-1">3rd Quarter</small><br/>
+            <small className="pl-1">3rd Quarter</small>
+            <br />
             <input
-                  type="text"
-                  class="form-control text-capitalize font-weight-bold form-control-sm border-0"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  
-                />
+              type="text"
+              class="form-control text-capitalize font-weight-bold form-control-sm border-0"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+            />
           </div>
           <div className="col">
-            <small className = "pl-1">4th Quarter</small><br/>
+            <small className="pl-1">4th Quarter</small>
+            <br />
             <input
-                  type="text"
-                  class="form-control text-capitalize font-weight-bold form-control-sm border-0"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  
-                />
+              type="text"
+              class="form-control text-capitalize font-weight-bold form-control-sm border-0"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+            />
           </div>
           <div className="col">
-            <small className = "pl-1">Full Payment</small><br/>
+            <small className="pl-1">Full Payment</small>
+            <br />
             <input
-                  type="text"
-                  class="form-control text-capitalize font-weight-bold form-control-sm border-0"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  
-                />
+              type="text"
+              class="form-control text-capitalize font-weight-bold form-control-sm border-0"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+            />
           </div>
           <div className="col">
-            <small className = "pl-1">Date of Issue</small><br/>
+            <small className="pl-1">Date of Issue</small>
+            <br />
             <input
-                  type="text"
-                  class="form-control text-capitalize font-weight-bold form-control-sm border-0"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  placeholder="Enter Date of Issue"
-                />
+              type="text"
+              class="form-control text-capitalize font-weight-bold form-control-sm border-0"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="Enter Date of Issue"
+            />
           </div>
         </div>
-        <div className ="row mt-5">
-            <div className = "col-12 text-center text-uppercase">
-            <h3 className = "text-danger">note: post this permit in a conspicuous place</h3>
-            </div>
-            <div className = "col-6 text-center text-info">
+        <div className="row mt-5">
+          <div className="col-12 text-center text-uppercase">
+            <h3 className="text-danger">
+              note: post this permit in a conspicuous place
+            </h3>
+          </div>
+          <div className="col-6 text-center text-info">
             lgusibalom@gmail.com
-            </div>
-            <div className = "col-6 text-center text-info">
+          </div>
+          <div className="col-6 text-center text-info">
             TelFax No. (036) 543-7834
-            </div>
+          </div>
         </div>
 
         <div className="row mt-5 mb-5" />
-     
       </React.Fragment>
     );
   }
@@ -324,28 +329,31 @@ class PrintCertificate extends React.Component {
   state = {
     mainContent:
       "This is to certify that according to the records filed in this office, one establishment operation Printing job in the Municipality of Sibalom namely:",
-    date: "Done this 17th day of September 2018 at Sibalom, Antique,Philippines",
-    businessProfileObject:""
+    date:
+      "Done this 17th day of September 2018 at Sibalom, Antique,Philippines",
+    businessProfileObject: ""
   };
- 
-  getParam(){
+
+  getParam() {
     var urlParams = new URLSearchParams(window.location.search);
     //console.log(urlParams.get('eventid'));
 
     var event_id = urlParams.get("houseId");
-    if (event_id!=null){
+    if (event_id != null) {
       console.log(event_id);
       let sup = this;
-      db.collection("houseProfiles").doc(event_id).onSnapshot(function(doc) {
-        sup.setState({
-          businessProfileObject:doc.data()
-        })
-    });
-    }else{
+      db.collection("houseProfiles")
+        .doc(event_id)
+        .onSnapshot(function(doc) {
+          sup.setState({
+            businessProfileObject: doc.data()
+          });
+        });
+    } else {
       console.log("The Nun");
     }
   }
-  componentDidMount(){
+  componentDidMount() {
     this.getParam();
   }
 
@@ -411,7 +419,7 @@ class PrintCertificate extends React.Component {
           <div className="col-4">
             <input
               type="text"
-              defaultValue = {this.state.businessProfileObject.name}
+              defaultValue={this.state.businessProfileObject.name}
               class="form-control border-0 font-weight-bold"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
@@ -421,7 +429,7 @@ class PrintCertificate extends React.Component {
           <div className="col-4">
             <input
               type="text"
-              defaultValue = {this.state.businessProfileObject.owner}
+              defaultValue={this.state.businessProfileObject.owner}
               class="form-control border-0 font-weight-bold"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
@@ -430,7 +438,7 @@ class PrintCertificate extends React.Component {
           </div>
           <div className="col-4">
             <input
-             defaultValue = {this.state.businessProfileObject.address}
+              defaultValue={this.state.businessProfileObject.address}
               type="text"
               class="form-control border-0 font-weight-bold"
               id="exampleInputEmail1"

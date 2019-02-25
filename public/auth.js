@@ -3,6 +3,14 @@ class Login extends React.Component {
   login(){
     login();
   }
+  resetPassword = () =>{
+    firebase.auth().sendPasswordResetEmail("ablazebh@gmail.com").then(function() {
+      // Email sent.
+      alert("Password Reset Email Sent")
+    }).catch(function(error) {
+      // An error happened.
+    });
+  }
   render() {
     return (
       <React.Fragment>
@@ -39,7 +47,7 @@ class Login extends React.Component {
             <button type="button" onClick = {this.login.bind(this)}  class="btn btn-dark w-100">Login</button>
             </div>
             <div className = "row mt-3">
-            <small>Forgot Password? <a className = "text-info" href = "#">Reset Password</a></small>
+            <small>Forgot Password? <a className = "text-info" href = "#" onClick = {()=>this.resetPassword()}>Reset Password</a></small>
             </div>
           </div>
         </div>
