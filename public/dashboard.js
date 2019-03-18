@@ -30,7 +30,7 @@ class Dashbaord extends React.Component {
       <React.Fragment>
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow fixed-top">
           <a className="navbar-brand" href="#">
-            ABLAZE
+            Boarding House Management System
           </a>
           <button
             className="navbar-toggler"
@@ -77,8 +77,7 @@ class Dashbaord extends React.Component {
           </div>
         </nav>
         <div className="row h-100">
-          <div className = "col-2">
-          </div>
+          <div className="col-2" />
 
           <div className="col-2 position-fixed h-100 pt-5">
             <div
@@ -160,7 +159,7 @@ class ManageBoardingHouse extends React.Component {
     getNumber();
   }
   getRequest() {
-    getRequest()
+    getRequest();
   }
 
   render() {
@@ -256,37 +255,37 @@ class ManageBoardingHouse extends React.Component {
   }
 }
 
-function getRequest(){
+function getRequest() {
   db.collection("changeNameRequest")
-      .where("status", "==", false)
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-        });
-
-        let baordingHouse = [];
-        console.log(querySnapshot);
-        querySnapshot.forEach(function(doc) {
-          baordingHouse.push(doc.data());
-        });
-        var listItem = baordingHouse.map(object => (
-          <RequestItem
-            key={object.ownerAccountId}
-            id={object.ownerAccountId}
-            objData={object}
-            newName={object.newName}
-          />
-        ));
-        ReactDOM.render(
-          <React.Fragment>{listItem}</React.Fragment>,
-          document.querySelector("#boardingHouseListContainer")
-        );
-      })
-      .catch(function(error) {
-        console.log("Error getting documents: ", error);
+    .where("status", "==", false)
+    .get()
+    .then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
       });
+
+      let baordingHouse = [];
+      console.log(querySnapshot);
+      querySnapshot.forEach(function(doc) {
+        baordingHouse.push(doc.data());
+      });
+      var listItem = baordingHouse.map(object => (
+        <RequestItem
+          key={object.ownerAccountId}
+          id={object.ownerAccountId}
+          objData={object}
+          newName={object.newName}
+        />
+      ));
+      ReactDOM.render(
+        <React.Fragment>{listItem}</React.Fragment>,
+        document.querySelector("#boardingHouseListContainer")
+      );
+    })
+    .catch(function(error) {
+      console.log("Error getting documents: ", error);
+    });
 }
 class RequestItem extends React.Component {
   state = { profile: {} };
@@ -301,57 +300,56 @@ class RequestItem extends React.Component {
       });
   }
 
-  confirmRequest =()=>{
-    let sup = this
-    if(confirm("Confirm name change?")){
+  confirmRequest = () => {
+    let sup = this;
+    if (confirm("Confirm name change?")) {
       db.collection("houseProfiles")
-      .doc(this.props.id)
-      .update({
-        name:this.props.newName
-      }).then(function(docRef){
-        console.log("name change Success")
-        db.collection("changeNameRequest")
-        .doc(sup.props.id).update({
-          status:true
-        }).then(function(){
-          getRequest();
+        .doc(this.props.id)
+        .update({
+          name: this.props.newName
         })
-      })
+        .then(function(docRef) {
+          console.log("name change Success");
+          db.collection("changeNameRequest")
+            .doc(sup.props.id)
+            .update({
+              status: true
+            })
+            .then(function() {
+              getRequest();
+            });
+        });
     }
-  }
+  };
   render() {
     return (
       <React.Fragment>
         <div className="list-group-item mt-2 list-group-item-action bg-light border-0 ">
-          <div className = "row">
-          <div className="col">
-            <div className="row pt-1">
-              <div className="col-auto text-primary font-weight-bold">
-                {this.state.profile.name}
-              </div>
-              <div classNamea="col-auto">to</div>
-              <div className="col-auto text-success font-weight-bold">
-                {this.props.newName}
+          <div className="row">
+            <div className="col">
+              <div className="row pt-1">
+                <div className="col-auto text-primary font-weight-bold">
+                  {this.state.profile.name}
+                </div>
+                <div classNamea="col-auto">to</div>
+                <div className="col-auto text-success font-weight-bold">
+                  {this.props.newName}
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col d-flex justify-content-end">
+            <div className="col d-flex justify-content-end">
               <button
                 type="button"
-                onClick = {this.confirmRequest.bind(this)}
+                onClick={this.confirmRequest.bind(this)}
                 className="btn mr-2 btn-small btn-success btn-sm"
               >
-               Confirm Request
+                Confirm Request
               </button>
-              <button
-                type="button"
-                className="btn btn-small btn-danger btn-sm"
-              >
-               Decline Request
+              <button type="button" className="btn btn-small btn-danger btn-sm">
+                Decline Request
               </button>
             </div>
           </div>
-
         </div>
       </React.Fragment>
     );

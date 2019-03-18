@@ -2,6 +2,7 @@ class BoardingHouseList extends React.Component {
   state = {};
   getBlockedList() {
     db.collection("houseProfiles")
+      .orderBy("status")
       // .where("status", "==", "block")
       .get()
       .then(function(querySnapshot) {
@@ -228,7 +229,7 @@ class PrintBusinessPermit extends React.Component {
             </div>
           </div>
           <div className="col text-center">
-            <div className="row">Apprved:</div>
+            <div className="row">Approved:</div>
             <div className="row mt-5">
               <div className="col">BY THE AUTHORITY OF THE MAYOR</div>
             </div>
