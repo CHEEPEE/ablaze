@@ -476,6 +476,14 @@ class BoardingHouseItem extends React.Component {
     win.focus();
   }
 
+  printBoarders = () => {
+    var win = window.open(
+      "printboarders.html?houseId=" + this.props.id,
+      "_blank"
+    );
+    win.focus();
+  };
+
   getcolor() {
     switch (this.state.objSnap.status) {
       case "pending":
@@ -560,7 +568,7 @@ class BoardingHouseItem extends React.Component {
                 data-target={"#checklist" + this.props.id}
                 className="btn btn-info btn-sm"
               >
-                Requirements Check List
+                Requirements
               </button>
             </div>
             <div className="col">
@@ -570,7 +578,7 @@ class BoardingHouseItem extends React.Component {
                 data-target={"#modalDetails" + this.props.id}
                 className="btn btn-info btn-sm"
               >
-                View Details
+                Details
               </button>
             </div>
             <div className="col">
@@ -579,7 +587,16 @@ class BoardingHouseItem extends React.Component {
                 className="btn btn-dark btn-sm"
                 onClick={this.printPermit.bind(this)}
               >
-                Print Permit
+                Permit
+              </button>
+            </div>
+            <div className="col">
+              <button
+                type="button"
+                className="btn btn-dark btn-sm"
+                onClick={() => this.printBoarders()}
+              >
+                Boarders
               </button>
             </div>
           </div>
@@ -705,6 +722,7 @@ function getBoardingHouses(status) {
               <div className="col" />
               <div className="col" />
               <div className="col" />
+              <div className="col" />
             </div>
             <div className="row w-100">
               <div className="list-group m-3 p-3 w-100" />
@@ -739,6 +757,7 @@ function getBoardingHouses(status) {
               <div className="col">Status</div>
               <div className="col">Owner</div>
               <div className="col">Address</div>
+              <div className="col" />
               <div className="col" />
               <div className="col" />
               <div className="col" />

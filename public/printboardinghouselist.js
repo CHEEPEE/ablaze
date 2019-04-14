@@ -1,3 +1,5 @@
+import { ETIME } from "constants";
+
 class BoardingHouseList extends React.Component {
   state = {};
   getBlockedList() {
@@ -69,6 +71,10 @@ class BoardingHouseItem extends React.Component {
       </div>
     );
   }
+}
+
+function generatePermitNumber() {
+  return "test";
 }
 
 class PrintBusinessPermit extends React.Component {
