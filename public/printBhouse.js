@@ -89,6 +89,19 @@ class PrintBusinessPermit extends React.Component {
       console.log("The Nun");
     }
   }
+
+  dispayCurrentDate =()=> {
+   let monArr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+   let date = new Date()
+   let day = date.getDay()
+   let month = monArr[date.getMonth()]
+   let year = date.getFullYear()
+   
+   return month+'-'+ day+'-'+year
+}
+  generatePermitNumber = () =>{
+    return new Date().getTime()
+  }
   componentDidMount(){
     this.getParam();
   }
@@ -180,6 +193,7 @@ class PrintBusinessPermit extends React.Component {
                   type="text"
                   class="form-control text-capitalize font-weight-bold form-control-sm border-0"
                   id="exampleInputEmail1"
+                  defaultValue = {this.generatePermitNumber()}
                   aria-describedby="emailHelp"
                   placeholder="Enter Permit Number"
                 />
@@ -200,6 +214,7 @@ class PrintBusinessPermit extends React.Component {
                   type="text"
                   class="form-control text-capitalize font-weight-bold form-control-sm border-0"
                   id="exampleInputEmail1"
+                  defaultValue = {"OR-"+this.generatePermitNumber()}
                   aria-describedby="emailHelp"
                   placeholder="Enter OR Number"
                 />
@@ -210,6 +225,7 @@ class PrintBusinessPermit extends React.Component {
                   type="text"
                   class="form-control text-capitalize font-weight-bold form-control-sm border-0"
                   id="exampleInputEmail1"
+                  defaultValue = {this.dispayCurrentDate()}
                   aria-describedby="emailHelp"
                   placeholder="Enter Date Paid"
                 />
@@ -220,6 +236,7 @@ class PrintBusinessPermit extends React.Component {
                   type="text"
                   class="form-control text-capitalize font-weight-bold form-control-sm border-0"
                   id="exampleInputEmail1"
+                  defaultValue = "Renewal"
                   aria-describedby="emailHelp"
                   placeholder="Enter Business Status"
                 />
